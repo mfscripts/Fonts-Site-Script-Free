@@ -1,0 +1,114 @@
+<?php
+
+include_once("config.inc.php");
+
+$d      = $_REQUEST['d'];
+$custom = $_REQUEST['custom'];
+
+$htmlpage = 2;
+$temp = mysql_query("SELECT name, fontfilename, downloads, filesize, rating FROM tblfonts WHERE id=$d LIMIT 1");
+$name = mysql_result($temp, 0, name);
+$fontfilename = mysql_result($temp, 0, fontfilename);
+$downloads = mysql_result($temp, 0, downloads);
+$filesize = mysql_result($temp, 0, filesize);
+$rating = mysql_result($temp, 0, rating);
+$ptitle = $name." Font Details";
+
+include_once("header.php");
+
+$characters = $font_characters_path.$d."/";
+if(!file_exists($characters)) mkdir($characters, 0755);
+
+?>
+<br><h4><?php echo UCWords($name); ?> Information:</h4>
+<table width="100%" cellpadding="0" cellspacing="0">
+<tr><td valign="top" style="padding-left:30px;padding-bottom:10px;">
+<table width="100%" cellpadding="3" cellspacing="0">
+<tr><td valign="top" width="300">Font Name: <?php echo $name; ?></td>
+<td valign="top">Downloads: <?php echo $downloads; ?></td></tr>
+<tr><td valign="top" width="300">Rating: <?php echo $rating/10; ?>/10&nbsp;&nbsp;<a href="javascript:popUp('rate.php?h=1&id=<?php echo $d; ?>')"><img src="images/thumb-up.jpg" border="0" alt="vote up" width="16" height="15"></a> <a href="javascript:popUp('rate.php?h=0&id=<?php echo $d; ?>')"><img src="images/thumb-down.jpg" border="0" alt="vote down" width="16" height="15"></a></td>
+<td valign="top">Filesize: <?php echo $filesize; ?>KB</td></tr>
+</td></tr></table>
+</td><td align="center" valign="top" width="100">
+<a href="download-<?php echo $d; ?>-<?php echo createhtmlname($name); ?>.zip" style="font-size:16px;font-weight: bold;">download<br>now</font>
+</td>
+<td width="46">&nbsp;</td></tr>
+</table>
+<br><b>Preview:</b><br>
+<table width="100%" cellpadding="3" cellspacing="0" height='90'>
+<?php
+    if(!$custom) {
+	  if(strlen($imagetext) == 0) $custom = $name;
+	  else $custom = $imagetext;
+	}
+    echo "<tr><td height='90'><img src='custom-thumb.php?d=$d&fontfilename=$fontfilename&custom=$custom'></td></tr>";
+?>
+<form action="font-<?php echo $d; ?>-<?php echo createhtmlname($name); ?>.html" method="POST"><tr><td align="center"><b>Custom preview:</b> <input name="custom" type="text" value="<?php if($custom) echo $custom; else echo $name; ?>" maxlength="25"> <input name="d" type="hidden" value="<?php echo $d; ?>"><input name="submit" type="submit" value="update"></td></tr></form>
+</table>
+<br><b>Characters:</b><br>
+<table width="100%" cellpadding="3" cellspacing="0">
+<?php
+// uppercase
+for ($i=65; $i<=90; $i++) {
+	$x = chr($i);
+	createletter($x, $i);
+	echo "<img src=\"".$characters."$i.gif\" alt=\"$x\" width=\"24\" height=\"44\" style=\"border:1px #CCCCCC solid;margin-top:2px;\">&nbsp;";
+}
+echo "<br>";
+// lowercase
+for ($i=97; $i<=122; $i++) {
+	$x = chr($i);
+	createletter($x, $i);
+	echo "<img src=\"".$characters."$i.gif\" alt=\"$x\" width=\"24\" height=\"44\" style=\"border:1px #CCCCCC solid;margin-top:2px;\">&nbsp;";
+}
+echo "<br>";
+// numbers
+for ($i=48; $i<=57; $i++) {
+	$x = chr($i);
+	createletter($x, $i);
+	echo "<img src=\"".$characters."$i.gif\" alt=\"$x\" width=\"24\" height=\"44\" style=\"border:1px #CCCCCC solid;margin-top:2px;\">&nbsp;";
+}
+?>
+</table>
+<br><br><b>Package Contents:</b><br>
+<table width="100%" cellpadding="5" cellspacing="0">
+<?php
+echo "<tr bgcolor=\"#CCCCCC\"><td style=\"border-left:1px solid #CCCCCC;border-top:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;\" class=\"smalltb\"><i>filename:</i></td><td width=\"80\" style=\"border-left:1px solid #CCCCCC;border-top:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;\" class=\"smalltb\"><i>extension:</i></td><td width=\"120\" style=\"border-left:1px solid #CCCCCC;border-top:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;\" class=\"smalltb\"><i>type:</i></td><td width=\"100\" style=\"border-left:1px solid #CCCCCC;border-top:1px solid #CCCCCC;border-right:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;\" class=\"smalltb\"><i>options:</i></td></tr>";
+$directory = $font_contents_path.$d."/";
+$handler = opendir($directory);
+    while ($file = readdir($handler)) {
+        if ($file != '.' && $file != '..') {
+		    $viewlink = "-";
+		    $tempexp = explode(".", $file);
+			$final = COUNT($tempexp)-1;
+			$extension = strtolower($tempexp[$final]);
+			if($extension == "ttf") {
+			  $type = "ttf font";
+			  $viewlink = "<a href=\"download-$d-".createhtmlname($name).".zip\">download all</a>";
+			}
+			elseif($extension == "txt") {
+			  $type = "text file";
+			  $viewlink = "<a href=\"viewfile.php?f=".base64_encode($d."/".$file)."\" target=\"_blank\">view file</a>";
+			}
+			elseif($extension == "htm") {
+			  $type = "htm file";
+			  $viewlink = "<a href=\"viewfile.php?f=".base64_encode($d."/".$file)."\" target=\"_blank\">view file</a>";
+			}
+			elseif($extension == "html") {
+			  $type = "html file";
+			  $viewlink = "<a href=\"viewfile.php?f=".base64_encode($d."/".$file)."\" target=\"_blank\">view file</a>";
+			}
+			elseif($extension == "rtf") $type = "real text format";
+			elseif($extension == "doc") $type = "word document";
+			elseif($extension == "zip") $type = "zip file";
+			else $type = "-";
+            echo "<tr><td style=\"border-left:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;\">".$file."</td><td style=\"border-left:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;\">".$extension."</td><td style=\"border-left:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;\">".$type."</td><td style=\"border-left:1px solid #CCCCCC;border-right:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC;\">".$viewlink."</td></tr>";
+	    }
+    }
+    closedir($handler);
+?>
+</table>
+
+<?php
+include("footer.php");
+?>

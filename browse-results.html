@@ -1,0 +1,82 @@
+<?php
+
+include_once("config.inc.php");
+
+$start   = $_REQUEST['start'];
+$perpage = $_REQUEST['perpage'];
+$w       = $_REQUEST['w'];
+
+if((!$start || ($start < 0))) $start = 0;
+if(!$perpage) $perpage = 30;
+if(!$w) $w = "A";
+elseif($perpage > 50) $perpage = 50;
+elseif($perpage < 1) $perpage = 1;
+$htmlpage = 2;
+$ptitle = $w." Font Category";
+
+include_once("header.php");
+
+?>
+<table width="500" cellpadding="3" cellspacing="0" align="center" style="margin-top:5px;"><tr height="25"><td align="center">
+<?php
+for ($i=65; $i<=90; $i++) {
+ $x = chr($i);
+ echo "<a href=\"b-$x.html\">$x</a> &nbsp;";
+}
+ echo "<a href=\"b-num.html\">#</a> &nbsp;";
+?>
+</td></tr>
+<tr><td align="center">
+<?php
+if($w == "num") $search = "name LIKE '0%' || name LIKE '1%' || name LIKE '2%' || name LIKE '3%' || name LIKE '4%' || name LIKE '5%' || name LIKE '6%' || name LIKE '7%' || name LIKE '8%' || name LIKE '9%'";
+  else $search = "name LIKE '$w%'";
+  $temp = mysql_query("SELECT id, name, fontfilename, downloads, rating FROM tblfonts WHERE $search ORDER BY name");
+  $totalresults = mysql_numrows($temp);
+  $temp = mysql_query("SELECT id, name, fontfilename, downloads, rating FROM tblfonts WHERE $search ORDER BY name LIMIT $start, $perpage");
+  if($start < $perpage) {
+    if($start > 0) echo "<a href=\"b-$w.html?start=0\"><< previous</a>&nbsp;&nbsp;";
+	else echo "<font class=\"smallora2\"><< previous</font>&nbsp;&nbsp;";
+  }
+  else {
+    echo "<a href=\"b-$w.html?start=".($start - $perpage)."\"><< previous</a>&nbsp;&nbsp;";
+  }
+  if(($start+$perpage) < $totalresults) $tovalue = $start+$perpage;
+  else $tovalue = $totalresults;
+  echo "results ".($start+1)." to ".($tovalue)." of $totalresults";
+  if(($start + $perpage) > $totalresults) {
+    echo "&nbsp;&nbsp;<font class=\"smallora2\">next >></font> ";
+  }
+  else echo "&nbsp;&nbsp;<a href=\"b-$w.html?start=".($start + $perpage)."\">next >></a>";
+?>
+</td></tr></table><hr>
+<table width="100%" cellpadding="3" cellspacing="0">
+<?php
+  while($row = mysql_fetch_array($temp)) {
+    echo "<tr><td height='90' onClick=\"parent.location='font-$row[id]-".createhtmlname($row[name]).".html'\" style='background: white url(images/sample-bg.jpg) repeat-x bottom;'><table width='100%' cellpadding='0' cellspacing='0' height='100%'><tr><td  style=\"background-image: url(get-thumb.php?thumbid=$row[id]);background-repeat: no-repeat; cursor: hand;\" height='100%'>&nbsp;</td></tr></table></td><td width=\"130\" height=\"90\" style=\"padding-left:10px;\" style='background: white url(images/sample-bg.jpg) repeat-x bottom;'><b>$row[name]</b><br>Rating: ";
+	echo $row[rating]/10;
+	echo "/10<br>Downloads: $row[downloads]<br><a href=\"font-$row[id]-".createhtmlname($row[name]).".html\">details</a> <font class=\"smallora\">|</font> <a href=\"download-$row[id]-".createhtmlname($row[name]).".zip\">download</a></td></tr>";
+	echo "<tr><td colspan=\"3\" height=\"1\" background=\"images/lines.gif\"></td></tr>";
+  }
+?>
+</table>
+<table width="100%" cellpadding="3" cellspacing="0"><tr><td align="center">
+<?php
+  if($start < $perpage) {
+    if($start > 0) echo "<a href=\"b-$w.html?start=0\"><< previous</a>&nbsp;&nbsp;";
+	else echo "<font class=\"smallora2\"><< previous</font>&nbsp;&nbsp;";
+  }
+  else {
+    echo "<a href=\"b-$w.html?start=".($start - $perpage)."\"><< previous</a>&nbsp;&nbsp;";
+  }
+  if(($start+$perpage) < $totalresults) $tovalue = $start+$perpage;
+  else $tovalue = $totalresults;
+  echo "results ".($start+1)." to ".($tovalue)." of $totalresults";
+  if(($start + $perpage) > $totalresults) {
+    echo "&nbsp;&nbsp;<font class=\"smallora2\">next >></font> ";
+  }
+  else echo "&nbsp;&nbsp;<a href=\"b-$w.html?start=".($start + $perpage)."\">next >></a>";
+?>
+</td></tr></table>
+<?php
+include("footer.php");
+?>

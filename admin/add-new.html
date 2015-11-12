@@ -1,0 +1,123 @@
+<?php
+
+include_once("../config.inc.php");
+include_once("../function-library.php");
+include_once("../db_connect.php");
+
+$ptitle = "Admin Area - Add New Font";
+include_once("header.php");
+
+$submitme   = $_REQUEST['submitme'];
+$f_font_name = $_REQUEST['f_font_name'];
+
+if(isset($submitme)) {
+
+  $errorstring = "";
+
+  if(strlen($f_font_name) == 0) $errorstring = "Please tell us the title of the font.<br>";
+  
+  if(strlen($errorstring) == 0) {
+
+  function storefile($var, $location, $filename=NULL, $maxfilesize=NULL) {
+   $ok = false;
+
+   // Check file
+   $mime = $_FILES[$var]["type"];
+   if(($mime=="application/zip") || ($mime == "application/x-zip-compressed") || ($mime == "multipart/x-zip") || ($mime == "application/x-gzip")) {
+     // Mime type is correct
+     // Check extension
+     $name  = $_FILES[$var]["name"];
+     $array = explode(".", $name);
+     $nr    = count($array);
+     $ext  = $array[$nr-1];
+     if($ext=="zip") {
+       $ok = true;
+     }
+   }
+   
+   if(isset($maxfilesize)) {
+     if($_FILES[$var]["size"] > $maxfilesize) { 
+       $ok = false;
+     }
+   }
+   
+   if($ok==true) {
+     $tempname = $_FILES[$var]['tmp_name'];
+     if(isset($filename)) {
+       $uploadpath = $location.$filename;
+     } else {
+       $uploadpath = $location.$_FILES[$var]['name'];
+     }
+     if(is_uploaded_file($_FILES[$var]['tmp_name'])) {  
+       while(move_uploaded_file($tempname, $uploadpath)) {
+         // Wait for the script to finish its upload    
+       }
+     }
+     return true;
+   } else {
+     return false;
+   }
+  }
+
+  $insert_new = mysql_query("INSERT INTO tblfonts (name) VALUES ('".escape_string($f_font_name)."')");
+  $last_insert = mysql_insert_id();
+  
+  if($insert_new) {
+  $newfilename = $last_insert.".zip";
+  if(storefile("f_file", "../".$font_originals_path, $newfilename)) {
+   // if done, extract and update db
+   include('../includes/pclzip.lib.php');
+   $archive = new PclZip("../".$font_originals_path.$newfilename);
+   if ($archive->extract("../".$font_contents_path.$last_insert."/", $last_insert) == 0) 
+	{
+	//failed
+	$delete = mysql_query("DELETE FROM tblfonts WHERE id=".$last_insert);
+    $errorstring = "Upload failed, please try again later.<br>";
+	}
+   else {
+     // get first font name
+	 $directory = "../".$font_contents_path.$last_insert."/";
+     $handler = opendir($directory);
+     while ($file = readdir($handler)) {
+        if ($file != '.' && $file != '..') {
+		    $tempexp = explode(".", $file);
+			$final = COUNT($tempexp)-1;
+			$extension = strtolower($tempexp[$final]);
+			if($extension == "ttf") {
+			  $filesize = filesize($directory.$file);
+			  $filesize = $filesize/1024;
+			  $filesize = round($filesize, 1);
+			  $fontname = $file;
+			}
+		}
+	 }
+	 $update = mysql_query("UPDATE tblfonts SET fontfilename = '".$fontname."', filesize = ".$filesize." WHERE id = ".$last_insert." LIMIT 1");
+     $errorstring = "Upload succeeded!<br><br>";
+   }
+  }
+  else {
+   $delete = mysql_query("DELETE FROM tblfonts WHERE id=".$last_insert);
+   $errorstring = "Upload failed, please try again later.<br>";
+  }
+  
+  }
+  }
+
+}
+
+?>
+<table width="100%" cellpadding="3" cellspacing="0">
+<tr><td>Use this form to upload a new font to the site. The upload must be a zip file with the ttf inside or it will be declined.<br><br></td></tr>
+</table>
+<?php echo $errorstring; ?>
+<table width="100%" cellpadding="3" cellspacing="0">
+<form action="add-new.html" enctype="multipart/form-data" method="post">
+<tr><td><b>Font Name:</b></td><td><input name="f_font_name" type="text" value="<?php echo $f_font_name; ?>"></td></tr>
+<tr><td><b>Upload Font File</b></td><td><input type="file" name="f_file" size="40"></td></tr>
+<tr><td></td><td><input type="submit" name="submitme" value="upload font"></td></tr>
+</form>
+</table>
+
+<?php
+include("footer.php");
+?>

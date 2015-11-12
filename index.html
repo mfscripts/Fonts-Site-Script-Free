@@ -1,0 +1,46 @@
+<?php
+
+include_once("config.inc.php");
+
+$htmlpage = 1;
+$ptitle = "Free Fonts Home";
+
+include_once("header.php");
+
+$temp = mysql_query("SELECT id, name, fontfilename, downloads, rating FROM tblfonts ORDER BY rating DESC LIMIT 10");
+
+$get_total     = mysql_query("SELECT COUNT(id) AS total FROM tblfonts");
+$fonts_total   = mysql_result($get_total, 0, total);
+$display_words = strtolower(convert_number($fonts_total));
+
+?>
+
+<table width="100%" cellpadding="3" cellspacing="0">
+<tr><td width="150" valign="top"><img src="images/main-image.jpg" width="174" height="174" alt="<?php echo $sitename; ?> - best free fonts"></td><td>
+<br><h4>Welcome:</h4>
+Welcome to <a href="http://<?php echo $siteurl; ?>"><?php echo $sitename; ?></a>, one of the largest free fonts archive on the web! We have <b><?php echo $fonts_total; ?> fonts</b> (yes <?php echo $display_words; ?>) all with large previews, character maps and a customisable previews.<br><br>
+To begin, browse by category or alphabetically or use the search function to find a sepecific free font. Click any of the links on the main navigation above to begin.<br><br>
+We hope you enjoy the site and find the fonts you are after.<br><br>
+Regards,<br>
+<?php echo $sitename; ?> Admin
+</td>
+<td width="46">&nbsp;</td>
+</tr>
+</table>
+<br><b>Top 10 Rated Free Fonts:</b><br>
+
+<table width="100%" cellpadding="3" cellspacing="0">
+<tr><td colspan="2" height="1" background="images/lines.gif"></td></tr>
+<?php
+  while($row = mysql_fetch_array($temp)) {
+    echo "<tr><td height='90' onClick=\"parent.location='font-$row[id]-".createhtmlname($row[name]).".html'\" style='background: white url(images/sample-bg.jpg) repeat-x bottom;'><table width='100%' cellpadding='0' cellspacing='0' height='100%'><tr><td  style=\"background-image: url(get-thumb.php?thumbid=$row[id]);background-repeat: no-repeat; cursor: hand;\" height='100%'>&nbsp;</td></tr></table></td><td width=\"130\" height=\"90\" style=\"padding-left:10px;\" style='background: white url(images/sample-bg.jpg) repeat-x bottom;'><b>$row[name]</b><br>Rating: ";
+	echo $row[rating]/10;
+	echo "/10<br>Downloads: $row[downloads]<br><a href=\"font-$row[id]-".createhtmlname($row[name]).".html\">details</a> <font class=\"smallora\">|</font> <a href=\"download-$row[id]-".createhtmlname($row[name]).".zip\">download</a></td></tr>";
+	echo "<tr><td colspan=\"2\" height=\"1\" background=\"images/lines.gif\"></td></tr>";
+  }
+?>
+</table>
+
+<?php
+include("footer.php");
+?>

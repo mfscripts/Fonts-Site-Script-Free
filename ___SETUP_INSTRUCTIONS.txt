@@ -1,0 +1,18 @@
+Setup Instructions:
+
+- Upload the main zip file to your hosting area.
+- Unzip the zip file ensuring all folders are kept.
+- Amend config.inc.php with your sitename, siteurl and siteemail.
+- Modify the permissions on the following:
+  storage                      => CHMOD 755
+  storage/originals            => CHMOD 755
+  storage/characters           => CHMOD 755
+  storage/previews             => CHMOD 755
+  storage/contents             => CHMOD 755
+  storage/custom               => CHMOD 755
+- Create a new database in mysql.
+- Import the database.sql file stored within the sql directory.
+- Update db_connect.php in the root to connect correctly to your mysql database.
+- Add a http username/password to the admin directory.
+
+You should now be set to go!

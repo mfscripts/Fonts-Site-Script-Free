@@ -1,0 +1,15 @@
+Product licence details.
+
+Full terms and conditions of the script licence can be seen at www.arwscripts.com.
+
+A brief overview of the licence is detailed below:
+
+· Each purchase includes 1 licence for a single instance of the script on a single domain name.
+· All scripts include the full unencoded source code.
+· ARWScripts.com monitor licences and can revoke them should these terms be breached.
+· A reseller agreement is not included and reselling any of our scripts is not permitted.
+· Scripts can not be distributed in either the original or modified form, without prior written permission from ARWScripts.
+· Please contact support@arwscripts.com if you have any questions.
+· This document must remain un-modified.
+
+Any questions should be sent to support@arwscripts.com.

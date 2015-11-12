@@ -1,0 +1,6 @@
+RewriteEngine on
+RewriteRule ^font-(.*)-(.*).html$ details.html?d=$1 [QSA]
+RewriteRule ^download-(.*)-(.*).zip$ dl.html?d=$1 [QSA]
+RewriteRule ^c-(.*).html$ categories.html?w=$1 [QSA]
+RewriteRule ^b-(.*).html$ browse-results.html?w=$1 [QSA]
+AddHandler application/x-httpd-php .html

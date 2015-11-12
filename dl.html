@@ -1,0 +1,63 @@
+<?php
+
+include_once("config.inc.php");
+
+$d = $_REQUEST['d'];
+
+if (strlen($d) == 0) $error .= "There was no font specified, please try again.<br>";
+if (strlen($error) > 0) {
+  outputErrors($error);
+  include("footer.php");
+  exit;
+}
+
+$temp2 = mysql_query("SELECT downloads FROM tblfonts WHERE id=$d");
+$downloads = mysql_result($temp2, 0, downloads);
+$downloads++;
+$temp2 = mysql_query("UPDATE tblfonts SET downloads=$downloads WHERE id=$d");
+
+$date5=date("Ymd");
+$temp3 = mysql_query("SELECT * FROM tblstats WHERE date='$date5'");
+if(mysql_numrows($temp3) == 0) {
+	$temp5 = mysql_query("SELECT * FROM tblstats WHERE id='1'");
+	$tally1 = mysql_result($temp5, 0, tally);
+	$temp7 = mysql_query("SELECT * FROM tblstats WHERE id='2'");
+	$tally2 = mysql_result($temp7, 0, tally);
+	$newtally = $tally1 + $tally2;
+	$temp8 = mysql_query("UPDATE tblstats SET tally='$newtally' WHERE id='2'");
+	$temp4 = mysql_query("DELETE FROM tblstats WHERE id=1");
+	$temp9 = mysql_query("INSERT INTO tblstats (id, description, tally, date) VALUES (1, 'TALLY FOR DAILY COUNT', 1, '$date5')");
+}
+else {
+	$tally = mysql_result($temp3, 0, tally);
+	$tally++;
+	$temp4 = mysql_query("UPDATE tblstats SET tally=$tally WHERE id=1");
+}
+
+$temp = mysql_query("SELECT name FROM tblfonts WHERE id=$d");
+$filename = $d.".zip";
+$newfilename = mysql_result($temp, 0, name);
+$newfilename = createhtmlname($newfilename);
+$newfilename = $newfilename.".zip";
+
+$date = date("YmdHis");
+
+$filename = $font_originals_path.$filename;
+$ctype="application/zip";
+header("Pragma: public");
+header("Expires: 0");
+header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+header("Cache-Control: public"); 
+header("Content-Type: ".$ctype);
+$user_agent = strtolower ($_SERVER["HTTP_USER_AGENT"]);
+if ((is_integer (strpos($user_agent, "msie"))) && (is_integer (strpos($user_agent, "win")))) 
+{
+  header( "Content-Disposition: filename=".basename($newfilename).";" );
+} else {
+  header( "Content-Disposition: attachment; filename=".basename($newfilename).";" );
+}
+header("Content-Transfer-Encoding: binary");
+header("Content-Length: ".filesize($filename));
+readfile("$filename");
+exit();
+?>

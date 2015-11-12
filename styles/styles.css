@@ -1,0 +1,79 @@
+.style1 {
+	font-family: Tahoma;
+	font-size: 9px;
+	color: #000000;
+}
+input, textarea, select {
+  border-style:solid;
+  border-width:1px;
+  border-color:#666666;
+  font-size:11px;
+  color:#000000;
+  background: transparent url("../images/field_bg.jpg") repeat-x;
+}
+hr {
+color:#F2AA13;
+height:1px;
+padding:0px;
+margin:0px;
+}
+.small {
+	font-size: 10px;
+		text-decoration: none;
+	color:#F2AA13;
+}
+.topsmall {
+font-family: Tahoma;
+	font-size: 10px;
+	text-decoration: none;
+	color:#666666;
+}
+.smalltb {
+	font-size: 9px;
+	text-decoration: none;
+	color=#999999;
+	font-weight: none;
+}
+a {
+	font-size: 10px;
+		text-decoration: none;
+	color:#F2AA13;
+}
+a:hover {
+	font-size: 10px;
+		text-decoration: none;
+	color:#F2AA13;
+	  	text-decoration: underline;
+}
+.smallora {
+	font-size: 10px;
+	text-decoration: none;
+	color=#F2AA13;
+	font-weight: none;
+}
+
+.smallora2 {
+	font-size: 10px;
+	text-decoration: none;
+	color=#FADC9E;
+	font-weight: none;
+}
+
+.small7 {
+	font-size: 9px;
+	text-decoration: none;
+	color:#666666;
+	font-weight: none;
+}
+
+.small7:hover {
+	font-size: 9px;
+	text-decoration: underline;
+	color:#666666;
+	font-weight: none;
+}
+body,td,th {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color:#333333;
+}

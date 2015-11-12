@@ -1,0 +1,64 @@
+<?php
+
+include_once("config.inc.php");
+
+$showform = 1;
+$htmlpage = 5;
+
+$sendit    = $_REQUEST['sendit'];
+$youremail = $_REQUEST['youremail'];
+$subject   = $_REQUEST['subject'];
+$message   = $_REQUEST['message'];
+
+$ptitle = "Contact Us";
+
+include_once("header.php");
+
+if(isset($sendit)) {
+	$errorstring = "";
+	$youremail = strtolower(formatField($youremail));
+	if(strlen($youremail) == 0) $errorstring .="You must specify your email.<br>";
+	if(strlen($subject) == 0) $errorstring .="You must specify a subject.<br>";
+	if(strlen($message) == 0) $errorstring .="You have not entered a message.<br>";
+	if(strlen($youremail) < 9 || strlen($youremail) > 64) $errorstring .= "Please enter a valid email address.<br>";
+	if(strlen($errorstring) == 0){
+		$subject = "Contact from the ".$sitename." site - ".$subject;
+		$sent = mail($siteemail, $subject, $message, "FROM: ".$youremail);
+		if($sent) $showform = 0;
+	}
+}
+
+?>
+<br><h4>Contact Us:</h4>
+
+   <table width="100%" cellpadding="0" cellspacing="0" border="0" align="left">
+      <tr><td>
+	  <?php
+	  if($showform == 1) {
+	  ?>
+       Any questions or comments about the site or services we offer, feel free to contact us using the form <br>below:<br><br>
+	   <table width="100%" cellpadding="0" cellspacing="0" border="0" align="left" style="margin-left:20px;">
+	      <tr><form method="post" action="contact-us.html"><input type="hidden" name="sendit" value="yes"><td style="padding:0px;" align="left"><br>
+	        <?php if(strlen($errorstring) > 0) echo "<table cellpadding=\"8\" cellspacing=\"0\" border=\"0\" align=\"center\" bgcolor=\"#CC9900\"><tr><td><font class=\"error\"><b>Error(s) Found:</b><br><br>$errorstring</td></tr></table><br><br>";?>
+	        <table cellpadding="5" cellspacing="0" border="0">
+			<tr><td><b>Your Email:</b></td><td><input type="text" name="youremail" style="width:300px;" value="<?php echo stripslashes($youremail); ?>" <?php echo $script1; ?>></td></tr>
+	          <tr><td><b>Subject:</b></td><td><input type="text" name="subject" style="width:300px;" value="<?php echo stripslashes($subject); ?>" <?php echo $script1; ?>></td></tr>
+	          <tr><td valign="top"><b>Message:</b></td><td><textarea name="message" style="width:400px;" rows="10" <?php echo $script1; ?>><?php echo stripslashes($message); ?></textarea></td></tr>
+	          <tr><td></td><td><input type="submit" value="send" class="form" <?php echo $script1; ?>>&nbsp;&nbsp;<input type="reset" value="reset" class="form" <?php echo $script1; ?>></td></tr>
+	          <tr><td colspan="2" align="right"><br><a href="javascript:history.go(-1);">back</a></td></tr>
+	        </table><br>
+	      </td></form></tr>
+	    </table>
+		<?php 
+		} 
+		else echo "<b>Your message has been sent to ".$sitename.". We will endeavour to respond within the next<br>48 hours.<br><br>Thanks for your comments,<br>".$sitename."</b><br><br>";
+		?>
+	   
+      </td></tr>
+    </table>
+
+<?php
+
+include("footer.php");
+
+?>

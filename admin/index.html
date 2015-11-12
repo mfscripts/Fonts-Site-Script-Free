@@ -1,0 +1,60 @@
+<?php
+
+include_once("../config.inc.php");
+include_once("../function-library.php");
+include_once("../db_connect.php");
+
+if($_REQUEST['c'] == 1) {
+  @clean_directory("../".$font_previews_path);
+  @clean_directory("../".$font_characters_path);
+  @clean_directory("../".$font_custom_path);
+  $success = "All cache directories cleared.<br>";
+}
+elseif($_REQUEST['c'] == 2) {
+  @clean_directory("../".$font_previews_path);
+  $success = "Preview directory cache cleared.<br>";
+}
+elseif($_REQUEST['c'] == 3) {
+  @clean_directory("../".$font_characters_path);
+  $success = "Character directory cache cleared.<br>";
+}
+elseif($_REQUEST['c'] == 4) {
+  @clean_directory("../".$font_custom_path);
+  $success = "Custom Preview directory cache cleared.<br>";
+}
+
+$ptitle = "Admin Area";
+
+include_once("header.php");
+
+$get_total     = mysql_query("SELECT COUNT(id) AS total FROM tblfonts");
+$fonts_total   = mysql_result($get_total, 0, total);
+?>
+
+<table width="100%" cellpadding="3" cellspacing="0">
+<tr><td align="center">
+
+<br><b>Administration Area:</b><br><br>
+<u>Font Management:</u><br><br>
+<a href="add-new.html">Upload new font package</a><br>
+<br><br>
+
+<u>Maintenance:</u><br><br>
+<?php
+if(strlen($success) > 0) echo "<font style='color:green;'><b>SUCCESS: ".$success."</b></font><br>";
+?>
+<a href="index.html?c=1">Clear ALL Cache</a><br>(used if re-generating previews)<br>
+<b>or</b><br>
+<a href="index.html?c=2">Clear Preview Cache</a><br>
+<a href="index.html?c=3">Clear Characters Cache</a><br>
+<a href="index.html?c=4">Clear Custom Preview Cache</a><br>
+
+<br><br><br>
+
+<a href="../index.html">return to the site</a>
+</td></tr>
+</table>
+
+<?php
+include("footer.php");
+?>
