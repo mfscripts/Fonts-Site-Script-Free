@@ -1,9 +1,9 @@
-<h1>Reservo - Image Hosting Script Free</h1>
+<h1>Fonts Site Script Free</h1>
 
-Setup and manage your own image sharing service with Reservo - Image Hosting Script Free.
+Setup and manage your own image sharing service with Fonts Site Script Free.
 
 <h2>About Reservo - Image Hosting Script Free</h2>
-Reservo - Image Hosting Script Free is the initial version of the premium image sharing script Reservo available at <a href="https://reservo.co/">Reservo.co</a>.
+This fonts site script allows you to create your own fonts site repository. 
 
 This is a community based release that is supplied without support or liability. You are free to use the fonts site script as you wish. The only restriction to this PHP script is that this README file must not be edited or deleted. 
 
