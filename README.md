@@ -2,7 +2,7 @@
 
 Setup and manage your own image sharing service with Fonts Site Script Free.
 
-<h2>About Reservo - Image Hosting Script Free</h2>
+<h2>About Fonts Site Script Free</h2>
 This fonts site script allows you to create your own fonts site repository. 
 
 This is a community based release that is supplied without support or liability. You are free to use the fonts site script as you wish. The only restriction to this PHP script is that this README file must not be edited or deleted. 
