@@ -16,3 +16,5 @@ Setup Instructions:
 - Add a http username/password to the admin directory.
 
 You should now be set to go!
+
+Check out http://mfscripts.com/ for other PHP scripts!
